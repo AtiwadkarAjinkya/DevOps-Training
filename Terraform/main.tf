@@ -1,26 +1,13 @@
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-      version = "3.61.0"
-    }
-  }
+module "data" {
+  source = "./modules/data"
 }
 
-provider "aws" {
-  region = "us-east-1"
+module "key_pair" {
+  source = "./modules/key_pair"
 }
 
-resource "aws_instance" "web" {
-  ami           = "ami-09e67e426f25ce0d7"
-  instance_type = "t2.micro"
-  key_name      = "Ajinkya"
-
-  tags = {
-    Name = "Demo-Instance"
-  }
-}
-
-output "private_ip" {
-  value = aws_instance.web.private_ip  
+module "ec2" {
+  source = "./modules/ec2"
+  ami_id = module.data.ami_id
+  key_name = module.key_pair.key
 }
